@@ -10,11 +10,15 @@ import {
 	setRoundCap,
 	setTension,
 } from 'laser-pen';
+import chroma from 'chroma-js';
 
 let canvas: HTMLCanvasElement | null = null;
 let ctx: CanvasRenderingContext2D | null = null;
 let tracks: IOriginalPointData[] = [];
 let animationFrameId: number | null = null;
+
+const colorA = chroma.lch(84, 96, 95);
+const colorB = chroma.lch(77, 56, 178);
 
 function handleMouseMove(event: MouseEvent) {
 	if (!canvas || !ctx) return;
@@ -51,11 +55,10 @@ function startLaser() {
 	document.addEventListener('mousemove', handleMouseMove);
 
 	setDelay(400);
-	setMaxWidth(6);
+	setMaxWidth(8);
 	setMinWidth(1);
 	setTension(0.1);
 	setOpacity(0);
-	setColor(0, 255, 150);
 	setRoundCap(true);
 
 	draw();
@@ -92,6 +95,11 @@ function draw() {
 	tracks = drainPoints(tracks);
 
 	if (tracks.length >= 3) {
+		const [r, g, b] = chroma
+			.mix(colorA, colorB, (Date.now() % 2000) / 2000, 'lch')
+			.rgb();
+		setColor(r, g, b);
+
 		drawLaserPen(ctx, tracks);
 	}
 
