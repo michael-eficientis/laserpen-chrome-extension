@@ -1,5 +1,5 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
 	mode: 'production',
@@ -28,4 +28,4 @@ module.exports = {
 			patterns: [{ from: '.', to: '.', context: 'public' }],
 		}),
 	],
-};
+}
