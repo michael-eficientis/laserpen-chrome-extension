@@ -16,9 +16,10 @@ let canvas: HTMLCanvasElement | null = null
 let ctx: CanvasRenderingContext2D | null = null
 let tracks: IOriginalPointData[] = []
 let animationFrameId: number | null = null
+let colorIntervalId: number | null = null
 
-const colorA = chroma.lch(84, 96, 95)
-const colorB = chroma.lch(77, 56, 178)
+let colorA = chroma.lch(84, 96, 95)
+let colorB = chroma.lch(77, 56, 178)
 
 function handleMouseMove(event: MouseEvent) {
 	if (!canvas || !ctx) return
@@ -54,10 +55,15 @@ function startLaser() {
 
 	document.addEventListener('mousemove', handleMouseMove)
 
-	setDelay(400)
+	colorIntervalId = window.setInterval(() => {
+		colorA = chroma.random()
+		colorB = chroma.random()
+	}, 500)
+
+	setDelay(640)
 	setMaxWidth(8)
 	setMinWidth(1)
-	setTension(0.1)
+	setTension(0.42)
 	setOpacity(0)
 	setRoundCap(true)
 
@@ -73,6 +79,10 @@ function stopLaser() {
 	tracks = []
 
 	document.removeEventListener('mousemove', handleMouseMove)
+
+	if (colorIntervalId !== null) {
+		window.clearInterval(colorIntervalId)
+	}
 
 	if (animationFrameId !== null) {
 		window.cancelAnimationFrame(animationFrameId)
@@ -98,8 +108,8 @@ function draw() {
 		const [r, g, b] = chroma
 			.mix(colorA, colorB, (Date.now() % 2000) / 2000, 'lch')
 			.rgb()
-		setColor(r, g, b)
 
+		setColor(r, g, b)
 		drawLaserPen(ctx, tracks)
 	}
 
